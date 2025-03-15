@@ -43,11 +43,11 @@ reconstruction은 ‘input 이미지’와 encoder/decoder를 거친 ‘output �
 
 그러므로, latent token의 길이를 조절하고 싶으나, 2d inductive bias라는 한 가지 문제가 더 있다. 
 
-![image.png](3%209%20%E1%84%82%E1%85%A9%E1%86%AB%E1%84%86%E1%85%AE%E1%86%AB%20%E1%84%85%E1%85%B5%E1%84%87%E1%85%B2%201b1be6cfba2f80e6b3e4f44add042a9f/image%201.png)
+![image.png](3%209%20%E1%84%82%E1%85%A9%E1%86%AB%E1%84%86%E1%85%AE%E1%86%AB%20%E1%84%85%E1%85%B5%E1%84%87%E1%85%B2%201b1be6cfba2f80e6b3e4f44add042a9f/image-1.png)
 
 VIT를 예시로 들면, 네트워크 전 과정동안 이미지의 patch의 수와 token의 수가 1대 1로 대응된다. patch 수에 의해서 token 수가 제약을 받기 때문에, 우리가 원하는 adaptive한 길이의 latent token이 되는 것을 막는다.
 
-![image.png](3%209%20%E1%84%82%E1%85%A9%E1%86%AB%E1%84%86%E1%85%AE%E1%86%AB%20%E1%84%85%E1%85%B5%E1%84%87%E1%85%B2%201b1be6cfba2f80e6b3e4f44add042a9f/image%202.png)
+![image.png](3%209%20%E1%84%82%E1%85%A9%E1%86%AB%E1%84%86%E1%85%AE%E1%86%AB%20%E1%84%85%E1%85%B5%E1%84%87%E1%85%B2%201b1be6cfba2f80e6b3e4f44add042a9f/image-2.png)
 
 이에 저자들은 PERCEIVER ([Jaegle et al., 2021b;a](https://arxiv.org/abs/2103.03206)) 라는 paper를 소개한다. 해당 페이퍼는 어떤 크기/종류(음성/이미지 등)의 입력이 오더라도, 1-d 고정된 길이의 latent array에 정보 주입 가능하도록 제안하였다. 특정 데이터에 대한 inductive bias를 없애고, muti-modality를 위한 방식이다. 이러한 방식을 차용해 기존 2d token을 1-d으로 distillation 시키는 아이디어를 얻는다.
 
@@ -66,15 +66,15 @@ VIT를 예시로 들면, 네트워크 전 과정동안 이미지의 patch의 수
 
 디테일한 과정을 살펴보자. 수식으로는 아래 그림과 같이 표현된다.
 
-![image.png](3%209%20%E1%84%82%E1%85%A9%E1%86%AB%E1%84%86%E1%85%AE%E1%86%AB%20%E1%84%85%E1%85%B5%E1%84%87%E1%85%B2%201b1be6cfba2f80e6b3e4f44add042a9f/image%203.png)
+![image.png](3%209%20%E1%84%82%E1%85%A9%E1%86%AB%E1%84%86%E1%85%AE%E1%86%AB%20%E1%84%85%E1%85%B5%E1%84%87%E1%85%B2%201b1be6cfba2f80e6b3e4f44add042a9f/image-3.png)
 
 1th iter 을 보자.
 
-![image.png](3%209%20%E1%84%82%E1%85%A9%E1%86%AB%E1%84%86%E1%85%AE%E1%86%AB%20%E1%84%85%E1%85%B5%E1%84%87%E1%85%B2%201b1be6cfba2f80e6b3e4f44add042a9f/image%204.png)
+![image.png](3%209%20%E1%84%82%E1%85%A9%E1%86%AB%E1%84%86%E1%85%AE%E1%86%AB%20%E1%84%85%E1%85%B5%E1%84%87%E1%85%B2%201b1be6cfba2f80e6b3e4f44add042a9f/image-4.png)
 
 VQGAN encoder를 통해 나온 2d token(16x16개)과 초기화된 길이가 32인 1d token을 latent-distillation encoder의 입력으로 넣는다. latent-distillation encoder는 단순한 8개 layer의 self-attention으로 이루어져 있다. 즉, encoder를 거치게 되면 2d token에 대한 정보가 1d token에 distillation이 된다.
 
-![image.png](3%209%20%E1%84%82%E1%85%A9%E1%86%AB%E1%84%86%E1%85%AE%E1%86%AB%20%E1%84%85%E1%85%B5%E1%84%87%E1%85%B2%201b1be6cfba2f80e6b3e4f44add042a9f/image%205.png)
+![image.png](3%209%20%E1%84%82%E1%85%A9%E1%86%AB%E1%84%86%E1%85%AE%E1%86%AB%20%E1%84%85%E1%85%B5%E1%84%87%E1%85%B2%201b1be6cfba2f80e6b3e4f44add042a9f/image-5.png)
 
 이제는 역으로 길이가 32인 latent 1D token을 과 masked 2D tokens을 latent-distillation decoder에 넣는다. latent-distillation decoder은 latent 1D token을 가지고 2D token을 잘 복원할 수 있도록 학습되어진다. 즉, VQGAN encoder를 통해 나온 2d token과 latent-distillation decoder의 output으로 나온 2d token이 유사하도록 학습되어진다.
 
@@ -89,7 +89,7 @@ VQGAN encoder를 통해 나온 2d token(16x16개)과 초기화된 길이가 32�
 > 4. Experiments
 > 
 
-![image.png](3%209%20%E1%84%82%E1%85%A9%E1%86%AB%E1%84%86%E1%85%AE%E1%86%AB%20%E1%84%85%E1%85%B5%E1%84%87%E1%85%B2%201b1be6cfba2f80e6b3e4f44add042a9f/image%206.png)
+![image.png](3%209%20%E1%84%82%E1%85%A9%E1%86%AB%E1%84%86%E1%85%AE%E1%86%AB%20%E1%84%85%E1%85%B5%E1%84%87%E1%85%B2%201b1be6cfba2f80e6b3e4f44add042a9f/image-6.png)
 
 복잡한 이미지일수록, reconstuction을 위해서 더 많은 token이 필요하다.
 
@@ -97,7 +97,7 @@ VQGAN encoder를 통해 나온 2d token(16x16개)과 초기화된 길이가 32�
 
 학습에 사용된 분포를 가진 이미지는 적은 데이터도로 표현이 가능하나, 분포와 먼 데이터들을 표현하기 위해서는 더 많은 토큰이 필요하다. 이러한 사실들은 이미지마다 다른 토큰을 요구함을 보여주고 있다.
 
-![image.png](3%209%20%E1%84%82%E1%85%A9%E1%86%AB%E1%84%86%E1%85%AE%E1%86%AB%20%E1%84%85%E1%85%B5%E1%84%87%E1%85%B2%201b1be6cfba2f80e6b3e4f44add042a9f/image%207.png)
+![image.png](3%209%20%E1%84%82%E1%85%A9%E1%86%AB%E1%84%86%E1%85%AE%E1%86%AB%20%E1%84%85%E1%85%B5%E1%84%87%E1%85%B2%201b1be6cfba2f80e6b3e4f44add042a9f/image-7.png)
 
 더 적은 모델, 더 적은 데이터(학습 자원의 한계로) 학습했음에도 불구하고 다른 모델들과 큰 차이가 나지는 않는 성능을 보여준다.
 
@@ -115,10 +115,10 @@ encoder 2–3 times improves this to 59.5%.
 
 256 개 토큰보다 64 to 128 토큰에서 더 좋은 성능을 내는 것을 확인했다. classification을 위해서는 초기 토큰으로도 충분하고, 추가적인 토큰들은 reconstruction에서 중요한 역할을 하는 것으로 분석했다.
 
-![image.png](3%209%20%E1%84%82%E1%85%A9%E1%86%AB%E1%84%86%E1%85%AE%E1%86%AB%20%E1%84%85%E1%85%B5%E1%84%87%E1%85%B2%201b1be6cfba2f80e6b3e4f44add042a9f/image%208.png)
+![image.png](3%209%20%E1%84%82%E1%85%A9%E1%86%AB%E1%84%86%E1%85%AE%E1%86%AB%20%E1%84%85%E1%85%B5%E1%84%87%E1%85%B2%201b1be6cfba2f80e6b3e4f44add042a9f/image-8.png)
 
 기존에 2d inductive bias가 있는 모델들은 patch들에 제약을 받아서, attention map이 match에 영향을 받았으나, 저자들의 모델에서는 segmentation의 역할을 수행 가능함을 보여준다.
 
-![image.png](3%209%20%E1%84%82%E1%85%A9%E1%86%AB%E1%84%86%E1%85%AE%E1%86%AB%20%E1%84%85%E1%85%B5%E1%84%87%E1%85%B2%201b1be6cfba2f80e6b3e4f44add042a9f/image%209.png)
+![image.png](3%209%20%E1%84%82%E1%85%A9%E1%86%AB%E1%84%86%E1%85%AE%E1%86%AB%20%E1%84%85%E1%85%B5%E1%84%87%E1%85%B2%201b1be6cfba2f80e6b3e4f44add042a9f/image-9.png)
 
 recurrent를 반복 할수록, 각 토큰들이 더 세세한 부분에 집중하는 것을 알 수 있다. 이는 recurrent의 중요한 역할을 확인할 수 있는 자료이다. recurrent를 반복할 때마다, 추가로 토큰을 제공함으로써 기존의 토큰들이 더 자신의 분야에 집중할 수 있도록 한다는 것이 저자들의 설명이다. 각 토큰들이 바닥/논 등 특정 부위에 타겟된 것을 알 수 있다.
